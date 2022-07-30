@@ -73,9 +73,9 @@ GO
 -- If any error occurred, no changes should be made to DB. (after test) Drop both tables and view.
 CREATE TABLE people_peng
 (
-    Id int,
+    Id int Primary Key,
     Name nvarchar(50),
-    City int
+    City int 
 )
 INSERT INTO people_peng VALUES(1, 'Aaron Rodgers', 2)
 INSERT INTO people_peng VALUES(2, 'Russell Wilson', 1)
@@ -97,10 +97,53 @@ SELECT * FROM city_peng
 
 GO 
 
+DELETE FROM city_peng WHERE City = 'Seattle'   
+
+SELECT * FROM city_peng
+
+INSERT INTO city_peng VALUES(1, 'Madison')
+
+SELECT * FROM city_peng
+
+GO 
+
+CREATE VIEW Packers_peng
+AS
+SELECT p.Name
+FROM people_peng p
+JOIN city_peng c on c.Id = p.City
+WHERE c.City = 'Green Bay'
+
+GO
+
+SELECT * FROM Packers_peng
+
+DROP TABLE people_peng
+DROP TABLE city_peng
+DROP VIEW Packers_peng
+
 -- 5. Create a stored procedure “sp_birthday_employees_[you_last_name]” that 
 -- creates a new table “birthday_employees_your_last_name” and fill it with all employees that have a birthday on Feb. 
 -- (Make a screen shot) drop the table. Employee table should not be affected.
 
+GO 
+
+CREATE PROC sp_birthday_employees_peng AS
+SELECT FirstName + ' ' + LastName AS NAME
+FROM Employees
+WHERE MONTH(BirthDate) = 2
+
+GO
+
+EXEC sp_birthday_employees_peng
+
+GO
+
+DROP PROC sp_birthday_employees_peng
 
 
 -- 6. How do you make sure two tables have the same data?
+-- SELECT * FROM Table1
+-- UNION
+-- SELECT * FROM Table2
+-- Then check the column number
