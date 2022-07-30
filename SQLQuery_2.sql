@@ -193,19 +193,33 @@ ORDER BY [Product Kinds] DESC
  
 
 
--- 19. List 5 most popular products, their average price, and the customer city that ordered most quantity of it.
+-- 19. List 5 most popular products, their average price, and the customer city that ordered most quantity of it
+SELECT dt.ProductName, dt.UnitPrice, dt.City
+FROM
+(SELECT p.ProductName, o1.ProductID, p.UnitPrice, SUM(o1.Quantity) AS Quantity, ROW_NUMBER() OVER(ORDER BY SUM(o1.Quantity) DESC) RNK1,
+c.city, RANK() OVER(PARTITION BY c.City ORDER BY SUM(o1.Quantity) DESC) RNK2
+FROM Products p JOIN [Order Details] o1 on o1.ProductID = p.ProductID
+LEFT JOIN Orders o ON o.OrderID = o1.OrderID
+JOIN Customers c ON c.CustomerID = o.CustomerID
+GROUP BY p.ProductName, o1.ProductID, p.UnitPrice, c.city) dt
+JOIN
+WHERE dt.RNK1 <= 5 and RNK2 = 1
+
+
+-- 20. List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total quantity of products ordered
+-- from. (tip: join  sub-query)
+SELECT *
+FROM (
+SELECT e.City, e.EmployeeID,  count(o.OrderID) AS NumOfOrders, RANK() OVER(PARTITION BY e.City ORDER BY COUNT(o.OrderID) DESC) RNK
+FROM dbo.Employees e JOIN dbo.Orders o ON o.EmployeeID = e.EmployeeID
+GROUP BY  e.City, e.EmployeeID
+) dt
+INNER JOIN 
+
 
 SELECT c.ContactName, C.Country, count(o.OrderID) AS NumOfOrders, RANK() OVER(PARTITION BY c.Country ORDER BY count(o.OrderID) desc) RNK
 FROM Customers c JOIN Orders o ON c.CustomerID = o.CustomerID
 GROUP BY c.ContactName, C.Country
-
-SELECT p.ProductID, p.ProductName,  p.UnitPrice, SUM(o1.Quantity) AS Quantity, RANK() OVER(PARTITION BY p.ProductID ORDER BY SUM(o1.Quantity) DESC) RNK
-    FROM Products p JOIN [Order Details] o1 on o1.ProductID = p.ProductID
-    GROUP BY p.ProductID, p.ProductName, p.UnitPrice
-
--- 20. List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total quantity of products ordered
--- from. (tip: join  sub-query)
-
 
 
 
