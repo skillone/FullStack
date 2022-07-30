@@ -153,7 +153,7 @@ HAVING COUNT(e.EmployeeID) = 0 AND COUNT(c.CustomerID) > 0
 SELECT p.ProductName, SUM(o.Quantity) AS [Total Order Quantities]
 FROM Products p join [Order Details] o on p.ProductID = o.ProductID
 GROUP BY p.ProductName
-ORDER BY ProductName DESC
+ORDER BY [Total Order Quantities] DESC
 
 
 -- 17. List all Customer Cities that have at least two customers.
@@ -194,17 +194,28 @@ ORDER BY [Product Kinds] DESC
 
 
 -- 19. List 5 most popular products, their average price, and the customer city that ordered most quantity of it
-SELECT dt.ProductName, dt.UnitPrice, dt.City
+SELECT TOP 5 dt.ProductName, dt.ProductID, dt.UnitPrice, dt.City, SUM(o.Quantity) AS [Total Quantity]--, ROW_NUMBER() OVER(ORDER BY SUM(dt.Quantity) DESC) RNK2
 FROM
-(SELECT p.ProductName, o1.ProductID, p.UnitPrice, SUM(o1.Quantity) AS Quantity, ROW_NUMBER() OVER(ORDER BY SUM(o1.Quantity) DESC) RNK1,
-c.city, RANK() OVER(PARTITION BY c.City ORDER BY SUM(o1.Quantity) DESC) RNK2
+(SELECT p.ProductName, p.ProductID, p.UnitPrice, c.city, 
+SUM(o1.Quantity) AS Quantity, ROW_NUMBER() OVER(PARTITION BY p.ProductName ORDER BY SUM(o1.Quantity) DESC) RNK1
 FROM Products p JOIN [Order Details] o1 on o1.ProductID = p.ProductID
-LEFT JOIN Orders o ON o.OrderID = o1.OrderID
+JOIN Orders o ON o.OrderID = o1.OrderID
 JOIN Customers c ON c.CustomerID = o.CustomerID
-GROUP BY p.ProductName, o1.ProductID, p.UnitPrice, c.city) dt
-JOIN
-WHERE dt.RNK1 <= 5 and RNK2 = 1
+GROUP BY p.ProductName, p.ProductID, p.UnitPrice, c.city
+) dt
+JOIN [Order Details] o ON o.ProductID = dt.ProductID
+where dt.RNK1 = 1
+group by dt.ProductName, dt.ProductID, dt.UnitPrice, dt.City
+ORDER BY SUM(o.Quantity) DESC
 
+
+
+-- Camembert Pierrot	1577
+-- Raclette Courdavault	1496
+-- Gorgonzola Telino	1397
+-- Gnocchi di nonna Alice	1263
+-- Pavlova	1158
+-- Rhönbräu Klosterbier	1155
 
 -- 20. List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total quantity of products ordered
 -- from. (tip: join  sub-query)
