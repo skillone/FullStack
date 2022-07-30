@@ -158,19 +158,28 @@ ORDER BY ProductName DESC
 
 -- 17. List all Customer Cities that have at least two customers.
 -- a. --  Use -- union
-Select City, COUNT(City)
+select city, COUNT(CustomerID) AS [Cutomer Num]
+FROM Customers 
+where City not in
+(
+Select City
 FROM Customers
+GROUP BY CITY
+HAVING COUNT(CustomerID) = 0
 UNION
-SELECT City, COUNT(City)
+Select City
 FROM Customers
-
-
+GROUP BY CITY
+HAVING COUNT(CustomerID) = 1
+)
+group by city
+order by COUNT(CustomerID) DESC
 
 -- b. --  Use-- no union
 SELECT City, COUNT(CustomerID) AS [Cutomer Num]
 FROM Customers
 GROUP BY City
-HAVING COUNT(CustomerID) > 2
+HAVING COUNT(CustomerID) >= 2
 ORDER BY [Cutomer Num] DESC
 
 
