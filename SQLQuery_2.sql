@@ -208,35 +208,30 @@ where dt.RNK1 = 1
 group by dt.ProductName, dt.ProductID, dt.UnitPrice, dt.City
 ORDER BY SUM(o.Quantity) DESC
 
-
-
--- Camembert Pierrot	1577
--- Raclette Courdavault	1496
--- Gorgonzola Telino	1397
--- Gnocchi di nonna Alice	1263
--- Pavlova	1158
--- Rhönbräu Klosterbier	1155
+GO
 
 -- 20. List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total quantity of products ordered
 -- from. (tip: join  sub-query)
-SELECT *
-FROM (
-SELECT e.City, e.EmployeeID,  count(o.OrderID) AS NumOfOrders, RANK() OVER(PARTITION BY e.City ORDER BY COUNT(o.OrderID) DESC) RNK
+
+WIth cte AS
+(SELECT Top 1 e.City, count(o.OrderID) AS NumOfOrders
 FROM dbo.Employees e JOIN dbo.Orders o ON o.EmployeeID = e.EmployeeID
-GROUP BY  e.City, e.EmployeeID
-) dt
-INNER JOIN 
-
-
-SELECT c.ContactName, C.Country, count(o.OrderID) AS NumOfOrders, RANK() OVER(PARTITION BY c.Country ORDER BY count(o.OrderID) desc) RNK
-FROM Customers c JOIN Orders o ON c.CustomerID = o.CustomerID
-GROUP BY c.ContactName, C.Country
-
+GROUP BY e.City ORDER BY NumOfOrders DESC) 
+SELECT TOP 1 dt1.City, dt1.Quantity
+FROM (
+SELECT TOP 1 c.City, count(o1.Quantity) AS Quantity
+FROM Customers c
+JOIN dbo.Orders o on c.CustomerID = o.CustomerID
+join [Order Details] o1 on o1.orderID = o.OrderID
+GROUP BY c.City
+ORDER BY Quantity DESC
+) dt1
+join cte on cte.City = dt1.City
 
 
 -- 21. How do you remove the duplicates record of a table?
 
--- 
+-- We can use the table to union itself to remove all the duplicated.
 
 
 
