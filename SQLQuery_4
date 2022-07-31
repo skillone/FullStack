@@ -1,1 +1,126 @@
+1. What is index; types of indices; pros and cons
 
+Clustered Index, Non-clustered index.
+
+Pro: 
+
+
+2. What's the difference between Primary key and Unique constraint?
+
+1) There can only be one primary key while many unique keys. 
+2) Also, primary cannot be NULL while unique constraint can be NULL.
+3) Primary key sorts the table automatically. Unique does not.
+
+3. Tell me about check constraint
+
+In DML, the constraint is to use to specify the datatype, key of data and filter the data according to 
+some user-defined condition.
+
+4. Difference between temp table and table variable
+
+--1. both are stored in tempdb
+--2.scope: local/global, current batch
+--3. size: > 100 rows, < 100 rows 
+--4. do not use temp tables in stored procedures or user defined functions, but we can use table variables in sp, function
+
+5. Difference between WHERE and HAVING
+
+Having follows aggregation statements.
+
+WHERE does not have to follow .
+
+6. Difference between RANK() and DenseRank() — value gap
+
+RANK() has value gap if there is a tie. DenseRANK() does not have value gap.
+
+7. COUNT(*) vs. COUNT(colName)
+
+COUNT(*) returns the num of all columns including NULL columns.
+COUNT(colName) returns the num of non-NULL columns.
+
+8. What's the difference between left join and inner join? JOIN and Subquery, which one has a
+better performance, why?
+
+left join keeps all the rows of left table. 
+inner join keeps the intersection of rows of both tables.
+
+Join performs better as SQL language is embedded with join optimizer.
+
+9. What is correlated subquery
+
+Inner query is dependent on outter query.
+
+10. What is a CTE, why do we need CTE?
+
+cte: comment table expression.
+Recursive
+
+11. What does SQL Profiler do?
+
+SQL Profiler is a user interface which is used to monitor database for the data engine and further analysis.
+
+12. What is SQL injection, how to avoid SQL injection?
+
+SQL injection is the action of hackers injecting macilous code to destroy our data.
+
+13. Difference between SP and user defined function? When to use SP when to use function?
+
+SP refers to the stored procedure, a prepared sql query that we can save in our db and reuse whenever we need.
+
+14. Criteria of Union and Union all? Difference between UNION and UNION ALL
+
+--Criteria 
+--Columns of both tables have the same number and name.
+
+-- Differences
+-- Union will delete the duplicates
+
+
+15. Steps you take to improve SQL Queries
+
+--1. Avoid unnecessary joins.
+--2. Make good use of index 
+--3. Avoid selecting *
+--4. derived table to avoid too much grouping of non-aggregated field.
+--5. use join to replace subquery
+
+16. concurrency problem in transaction
+
+Two or more quires work on the same datebase at the same time.
+
+--1. Dirty Read: t1 allows t2 to read uncommitted data and t1 rolls back.
+
+
+--dirty reads:if t1 allows t2 to read uncommitted data, and then t1 rolled back
+    --caused by isolation level read uncommitted
+    --solved by isolation level read committed
+--lost update: when t1 and t2 read and update the same data but t2 finish its work earlier than t1, then t2 will lose their update
+    --caused by isolation level read committed
+    --solved by isolation level repeatble read
+--non-repeatable read: t1 read the same data twice while t2 is updating the data
+    --caused by isolation level read committed
+    --solved by isolation level repeatble read
+--phantom read: t1 reads the same data twice while t2 is inserting records
+    --caused by isolation level repeatable read
+    --solved by isolation level serializable
+
+
+17. what is deadlock, how to prevent
+
+18. what is normalization, 1NF - BCNF, benefits using normalization
+
+19. what are the system defined databases?
+
+20. composite key
+
+21. candidate key
+
+22. DDL vs. DML
+
+Data Definining
+
+23. ACID property
+
+24. table scan vs. index scan
+
+25. Difference between Union and JOIN
